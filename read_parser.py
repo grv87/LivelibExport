@@ -30,23 +30,20 @@ def parse_book(row, last_date):
 			spans = cell.xpath('.//span')
 			if len(spans) == 2:
 				rating_class = spans[1].get('class')
-				rating = get_rating_from_class(rating_class)
+				if rating_class is not None:
+					rating = get_rating_from_class(rating_class)
 		if link is None:
 			hrefs = cell.xpath('.//a')
 			for href in hrefs:
 				link = try_get_link(hrefs[0].get('href'))
 
-	if link is not None and rating is not None:
-		return Book(link, rating, last_date)
 	if link is not None:
-		print('Parsing error (rating not parsed):')
-		print(etree.tostring(row))
-		print('')
-	if rating is not None:
+		return Book(link, rating, last_date)
+	else:
 		print('Parsing error (link not parsed):')
 		print(etree.tostring(row))
 		print('')
-	return None
+		return None
 
 def try_parse_month(raw_month):
 	dict = defaultdict(lambda: '01', {
