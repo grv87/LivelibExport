@@ -4,14 +4,17 @@ from lxml import html
 from lxml import etree
 from book import Book
 
+rating_pattern = re.compile("^r(\d{1,2})(-\S+)?$")
+
 def get_rating_from_class(rating_class):
-	try:
-		if rating_class[0] == 'r':
-			return int(rating_class[1:2])
+	m = rating_pattern.fullmatch(rating_class)
+	if m is None:
+		print('Error get_rating_from_class("%s")' % (rating_class))
 		return None
-	except Exception as ex:
-		print('get_rating_from_class("%s"): %s' % (rating_class, ex))
-		return None
+	rating = int(m.group(1))
+	if rating >= 10:
+		rating /= 10
+	return rating
 
 def try_get_link(link):
 	if "/book/" in link:
